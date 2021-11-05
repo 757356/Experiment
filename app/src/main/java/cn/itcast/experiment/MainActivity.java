@@ -55,11 +55,12 @@ public class MainActivity extends AppCompatActivity {
             Intent data = result.getData();
             int resultCode = result.getResultCode();
             if(resultCode == RESULT_CODE_ADD_DATA){
-                if(null==data)return;
+                if(null==data)
+                    return;
                 String name=data.getStringExtra("name");
                 int position=data.getIntExtra("position",bookItems.size());
                 bookItems.get(position).setName( name );
-                recyclerViewAdapter.notifyItemInserted(position);
+                recyclerViewAdapter.notifyItemChanged(position);
 
             }
         }
