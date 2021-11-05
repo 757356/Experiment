@@ -1,5 +1,9 @@
 package cn.itcast.experiment;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -26,6 +31,40 @@ public class MainActivity extends AppCompatActivity {
 
     private List<BookItem> bookItems;
 
+    private MyRecyclerViewAdapter recyclerViewAdapter;
+    public static final int  RESULT_CODE_ADD_DATA = 1;
+
+    ActivityResultLauncher<Intent> launcherAdd = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            Intent data = result.getData();
+            int resultCode = result.getResultCode();
+            if(resultCode== RESULT_CODE_ADD_DATA){
+                if(null==data)return;
+                String name=data.getStringExtra("name");
+                int position=data.getIntExtra("position",bookItems.size());
+                bookItems.add(position,new BookItem(name,R.drawable.book_no_name));
+                recyclerViewAdapter.notifyItemInserted(position);
+
+            }
+        }
+    });
+    ActivityResultLauncher<Intent> launcherEdit = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            Intent data = result.getData();
+            int resultCode = result.getResultCode();
+            if(resultCode == RESULT_CODE_ADD_DATA){
+                if(null==data)return;
+                String name=data.getStringExtra("name");
+                int position=data.getIntExtra("position",bookItems.size());
+                bookItems.get(position).setName( name );
+                recyclerViewAdapter.notifyItemInserted(position);
+
+            }
+        }
+    });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +76,10 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager( this );
         mainRecycleView.setLayoutManager( layoutManager );
 
-        mainRecycleView.setAdapter( new MyRecyclerViewAdapter( bookItems ) );
+        //mainRecycleView.setAdapter( new MyRecyclerViewAdapter( bookItems ) );
+
+        recyclerViewAdapter = new MyRecyclerViewAdapter(bookItems);
+        mainRecycleView.setAdapter(recyclerViewAdapter);
     }
 
     public void initData(){
@@ -102,41 +144,52 @@ public class MainActivity extends AppCompatActivity {
                 int position=getAdapterPosition();
                 MenuItem menuItemAdd=contextMenu.add(Menu.NONE,1,1,"Add"+position);
                 MenuItem menuItemDelete=contextMenu.add(Menu.NONE,2,2,"Delete"+position);
+                MenuItem menuItemEdit=contextMenu.add(Menu.NONE, 3, 3, "Edit"+position);
 
                 menuItemAdd.setOnMenuItemClickListener(this);
                 menuItemDelete.setOnMenuItemClickListener(this);
+                menuItemEdit.setOnMenuItemClickListener(this);
             }
 
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 int position= getAdapterPosition();
+                Intent intent;
                 switch(menuItem.getItemId())
                 {
                     case 1:
-                        View dialogueView = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialogue_input_item,null);
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                        alertDialogBuilder.setView(dialogueView);
-
-                        alertDialogBuilder.setPositiveButton("确定",new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                EditText editName = dialogueView.findViewById(R.id.edit_text_name);
-                                bookItems.add( position, new BookItem( editName.getText().toString(),R.drawable.book_2 ) );
-                                MyRecyclerViewAdapter.this.notifyItemInserted(position);
-                            }
-                        });
-                        alertDialogBuilder.setCancelable(false).setNegativeButton ("取消",new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        });
-                        alertDialogBuilder.create().show();;
-
+//                        View dialogueView = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialogue_input_item,null);
+//                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+//                        alertDialogBuilder.setView(dialogueView);
+//
+//                        alertDialogBuilder.setPositiveButton("确定",new DialogInterface.OnClickListener(){
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                EditText editName = dialogueView.findViewById(R.id.edit_text_name);
+//                                bookItems.add( position, new BookItem( editName.getText().toString(),R.drawable.book_2 ) );
+//                                MyRecyclerViewAdapter.this.notifyItemInserted(position);
+//                            }
+//                        });
+//                        alertDialogBuilder.setCancelable(false).setNegativeButton ("取消",new DialogInterface.OnClickListener(){
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                            }
+//                        });
+//                        alertDialogBuilder.create().show();;
+                        intent=new Intent(MainActivity.this,EditBookActivity.class);
+                        intent.putExtra("position",position);
+                        launcherAdd.launch(intent);
                         break;
                     case 2:
                         bookItems.remove(position);
                         MyRecyclerViewAdapter.this.notifyItemRemoved(position);
+                        break;
+                    case 3:
+                        intent=new Intent(MainActivity.this,EditBookActivity.class);
+                        intent.putExtra("position",position);
+                        intent.putExtra("name",bookItems.get(position).getTitle());
+                        launcherEdit.launch(intent);
                         break;
                 }
 

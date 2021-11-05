@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/codefile/Android/Experiment/app/src/main/res/layout/activity_edit_book.xml" value="0.1" />
+        <entry key="..\:/codefile/Android/Experiment/app/src/main/res/layout/activity_edit_book2.xml" value="0.175" />
         <entry key="..\:/codefile/Android/Experiment/app/src/main/res/layout/activity_main.xml" value="0.1296875" />
         <entry key="..\:/codefile/Android/Experiment/app/src/main/res/layout/book_item_holder.xml" value="0.17300724637681159" />
         <entry key="..\:/codefile/Android/Experiment/app/src/main/res/layout/dialogue_input_item.xml" value="0.1296875" />
