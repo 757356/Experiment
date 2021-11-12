@@ -5,12 +5,10 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -19,13 +17,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.itcast.experiment.MyData.BookItem;
+import cn.itcast.experiment.MyData.DataBank;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     private MyRecyclerViewAdapter recyclerViewAdapter;
     public static final int  RESULT_CODE_ADD_DATA = 1;
+
+    private DataBank dataBank;
 
     ActivityResultLauncher<Intent> launcherAdd = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
@@ -44,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
                 String name=data.getStringExtra("name");
                 int position=data.getIntExtra("position",bookItems.size());
                 bookItems.add(position,new BookItem(name,R.drawable.book_no_name));
+
+                dataBank.saveData();
+
                 recyclerViewAdapter.notifyItemInserted(position);
 
             }
@@ -60,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
                 String name=data.getStringExtra("name");
                 int position=data.getIntExtra("position",bookItems.size());
                 bookItems.get(position).setName( name );
+
+                dataBank.saveData();
+
                 recyclerViewAdapter.notifyItemChanged(position);
 
             }
@@ -72,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initData();
-
         RecyclerView mainRecycleView = findViewById( R.id.recycle_view_books );
         LinearLayoutManager layoutManager = new LinearLayoutManager( this );
         mainRecycleView.setLayoutManager( layoutManager );
@@ -84,10 +92,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initData(){
-        bookItems=new ArrayList<BookItem>();
-        bookItems.add( new BookItem( "信息安全数学基础 (第二版)",R.drawable.book_1 ) );
-        bookItems.add( new BookItem("软件项目管理案例教程 (第四版)",R.drawable.book_2 ) );
-        bookItems.add( new BookItem("创新工程实践",R.drawable.book_no_name ) );
+        dataBank = new DataBank( MainActivity.this );
+        bookItems = dataBank.loadData();
+
+//        bookItems=new ArrayList<BookItem>();
+//        bookItems.add( new BookItem( "信息安全数学基础 (第二版)",R.drawable.book_1 ) );
+//        bookItems.add( new BookItem("软件项目管理案例教程 (第四版)",R.drawable.book_2 ) );
+//        bookItems.add( new BookItem("创新工程实践",R.drawable.book_no_name ) );
     }
 
     private class MyRecyclerViewAdapter extends RecyclerView.Adapter {
@@ -184,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 2:
                         bookItems.remove(position);
+                        dataBank.saveData();
                         MyRecyclerViewAdapter.this.notifyItemRemoved(position);
                         break;
                     case 3:

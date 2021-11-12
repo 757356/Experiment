@@ -1,6 +1,8 @@
-package cn.itcast.experiment;
+package cn.itcast.experiment.MyData;
 
-public class BookItem {
+import java.io.Serializable;
+
+public class BookItem implements Serializable {
     private String name;
     private int cover_resource_id;
 
