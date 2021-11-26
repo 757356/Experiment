@@ -33,7 +33,7 @@ public class EditBookActivity extends AppCompatActivity {
                 Intent intent=new Intent();
                 intent.putExtra("position",position);
                 intent.putExtra("name",editTextName.getText().toString());
-                setResult(MainActivity.RESULT_CODE_ADD_DATA,intent);
+                setResult(BookItemFragment.RESULT_CODE_ADD_DATA,intent);
                 EditBookActivity.this.finish();
             }
         });
