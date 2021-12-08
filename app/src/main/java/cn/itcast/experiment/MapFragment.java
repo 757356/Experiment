@@ -8,7 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.model.LatLng;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,6 +48,14 @@ public class MapFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         mapView = rootView.findViewById(R.id.baidu_map_view);
+
+        LatLng centerPoint = new LatLng(22.254895,113.539458);
+
+        MapStatus.Builder builder = new MapStatus.Builder();
+        builder.zoom(18.0f).target(centerPoint);
+        mapView.getMap().setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+
+        BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.jinan);
 
         return rootView;
     }
