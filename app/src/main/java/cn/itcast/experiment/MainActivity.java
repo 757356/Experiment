@@ -109,8 +109,10 @@ public class MainActivity extends AppCompatActivity {
 
                 case 0:
                     return BookItemFragment.newInstance( frgBook );
-                default:
+                case 1:
                     return WebViewFragment.newInstance();
+                default:
+                    return MapFragment.newInstance();
             }
 //            return mDatas.get( position );
         }

@@ -12,6 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Experiment">
+        <meta-data android:name="com.baidu.lbsapi.API_KEY"  android:value= "noxpmQRdktKkKDx24pKYH3XySp2G9pwf" />
+
         <activity
             android:name=".EditBookActivity"
             android:exported="true" />
