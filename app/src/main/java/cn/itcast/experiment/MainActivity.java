@@ -50,13 +50,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        tabTitles = new String[]{ "Book", "News", "Consumer" };
+        tabTitles = new String[]{ "Book", "News", "Consumer", "Game" };
 
         NewsItemFragment frgNew = new NewsItemFragment();
         ConsumerItemFragment frgConsumer = new ConsumerItemFragment();
+        GameFragment gameFragment = new GameFragment();
         mDatas.add(frgBook);
         mDatas.add(frgNew);
         mDatas.add(frgConsumer);
+        mDatas.add(gameFragment);
 
         ViewPager2 viewPagerFragments=findViewById(R.id.viewpager2_content);
         viewPagerFragments.setAdapter(new MyFragmentAdpater(this, mDatas));
@@ -111,8 +113,10 @@ public class MainActivity extends AppCompatActivity {
                     return BookItemFragment.newInstance( frgBook );
                 case 1:
                     return WebViewFragment.newInstance();
-                default:
+                case 2:
                     return MapFragment.newInstance();
+                default:
+                    return GameFragment.newInstance();
             }
 //            return mDatas.get( position );
         }
